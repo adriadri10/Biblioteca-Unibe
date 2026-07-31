@@ -1,0 +1,60 @@
+{
+    "nombre": "Biblioteca UNIBE",
+    "catalogo": [
+        {
+            "titulo": "El retrato de Dorian Gray",
+            "autor": "Oscar Wilde",
+            "isbn": "978-0199535989",
+            "disponible": false
+        },
+        {
+            "titulo": "Indigno de ser humano",
+            "autor": "Dazai Osamu",
+            "isbn": "978-8419035769",
+            "disponible": false
+        },
+        {
+            "titulo": "Mujercitas",
+            "autor": "Louisa May Alcott",
+            "isbn": "978-0075543893",
+            "disponible": false
+        }
+    ],
+    "usuarios": [
+        {
+            "nombre": "Jhuliana Cabrera",
+            "id_usuario": "26-0289",
+            "libros_prestados": ["978-0199535989"]
+        },
+        {
+            "nombre": "Lorenzo Martínez",
+            "id_usuario": "777025",
+            "libros_prestados": []
+        },
+        {
+            "nombre": "Adrielys Alcántara",
+            "id_usuario": "26-0568",
+            "libros_prestados": ["978-8419035769"]
+        },
+        {
+            "nombre": "Gon Freecss",
+            "id_usuario": "HXH-001",
+            "libros_prestados": []
+        },
+        {
+            "nombre": "Killua Zoldyck",
+            "id_usuario": "HXH-002",
+            "libros_prestados": []
+        },
+        {
+            "nombre": "Kurapika",
+            "id_usuario": "HXH-003",
+            "libros_prestados": ["978-0075543893"]
+        },
+        {
+            "nombre": "Leorio Paladiknight",
+            "id_usuario": "HXH-004",
+            "libros_prestados": []
+        }
+    ]
+}

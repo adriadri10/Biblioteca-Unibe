@@ -1,0 +1,143 @@
+/* Configuración general */
+* {
+    box-sizing: border-box;
+    font-family: "Times New Roman", Arial, serif;
+}
+
+body {
+    margin: 0;
+    background-color: #ffffff;
+    color: #1f2937;
+}
+
+/* Encabezado */
+header {
+    background-color: #0b1f4d;
+    color: white;
+    padding: 20px 30px;
+}
+
+header h1 {
+    margin: 0 0 10px 0;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #a9d6ff;
+}
+
+/* Contenido principal */
+main {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+h2 {
+    color: #3f2a73;
+    border-bottom: 2px solid #a9d6ff;
+    padding-bottom: 6px;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #d4d9e2;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #d9ecff;
+    color: #0b1f4d;
+}
+
+/* Estado de los libros */
+.disponible {
+    color: #228B22;
+    font-weight: bold;
+}
+
+.prestado {
+    color: #b22222;
+    font-weight: bold;
+}
+
+/* Formularios */
+form {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+input[type="text"], select {
+    padding: 6px;
+    border: 1px solid #3f2a73;
+    border-radius: 4px;
+}
+
+/* Botones */
+button {
+    background-color: #3f2a73;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0b1f4d;
+}
+
+/* Formulario para agregar libros */
+.form-agregar {
+    background-color: white;
+    border: 1px solid #d4d9e2;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+/* Mensajes de Flask */
+.mensaje {
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.mensaje.exito {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.mensaje.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Usuarios sin préstamos */
+.sin-prestamos {
+    color: gray;
+    font-style: italic;
+}
+
+/* Pie de página */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #3f2a73;
+    font-size: 0.9em;
+}

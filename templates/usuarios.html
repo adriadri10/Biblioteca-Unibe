@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Aquí mostramos todos los usuarios registrados -->
+<h2>Usuarios registrados</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Matrícula / ID</th>
+            <th>Libros en préstamo</th>
+        </tr>
+    </thead>
+    <tbody>
+    <!--recorremos la lista de usuarios que viene desde app.py -->
+    {% for usuario, titulos in usuarios_con_libros %}
+        <tr>
+            <!--mostramos la información básica del usuario -->
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.id_usuario }}</td>
+            <td>
+                <!--Si el usuario tiene libros prestados,
+                los mostramos en una lista -->
+                {% if titulos %}
+                <ul>
+                    <!--este for recorre todos los títulos que tiene prestados
+                    ese usuario -->
+                    {% for titulo in titulos %}
+                        <li>{{ titulo }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <!-- Si la lista está vacía, mostramos "Ninguno" -->
+                <span class="sin-prestamos">Ninguno</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    <!-- Nos tomó un buen rato entender este for, al final vimos que Flask crea
+    una fila por cada usuario automáticamente lol -->
+    </tbody>
+</table>
+
+{% endblock %}

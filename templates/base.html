@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca UNIBE</title>
+    <!--conecta este archivo con el CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>Biblioteca UNIBE</h1>
+    <!--menú para cambiar entre las páginas-->
+    <nav>
+        <a href="{{ url_for('catalogo') }}">Catálogo</a>
+        <a href="{{ url_for('usuarios') }}">Usuarios</a>
+    </nav>
+</header>
+
+<main>
+    <!-- estas instrucciones son de flask no de html!!!!!!!!!! Si desde app.py
+    enviamos un mensaje con flash(), aquí se va a mostrar automáticamente -->
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            {% for categoria, texto in mensajes %}
+                <p class="mensaje {{ categoria }}">{{ texto }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Aquí se carga el contenido de cada página-->
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <p>Actividad Flask · TI3111-01-2026-3 · Fundamentos de Programación</p>
+</footer>
+
+</body>
+</html>
