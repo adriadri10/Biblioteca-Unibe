@@ -1,85 +1,69 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Aquí mostramos todos los libros que hay en la biblioteca -->
 <h2>Catálogo de libros</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>ISBN</th>
-            <th>Estado</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-    <!-- Recorremos la lista de libros que viene desde app.py -->
+<!-- Buscador en vivo: no recarga la página, filtra con JS + fetch a /api/buscar -->
+<div class="buscador">
+    <input type="text" id="campo-busqueda" placeholder="Buscar por título o autor...">
+</div>
+
+<div id="grid-libros" class="grid-libros" data-hay-sesion="{{ 'si' if session.usuario else 'no' }}">
     {% for libro in libros %}
-        <tr>
-            <!-- Mostramos la información de cada libro -->
-            <td>{{ libro.titulo }}</td>
-            <td>{{ libro.autor }}</td>
-            <td>{{ libro.isbn }}</td>
-            <!-- Dependiendo de si el libro está disponible o no, mostramos un
-            texto diferente -->
-            <td>
+    <div class="tarjeta-libro" data-isbn="{{ libro.isbn }}">
+        <img src="{{ libro.imagen }}" alt="Portada de {{ libro.titulo }}" class="portada-libro"
+             onerror="this.src='https://via.placeholder.com/200x300.png?text=Sin+portada'">
+        <div class="info-libro">
+            <h3>{{ libro.titulo }}</h3>
+            <p class="autor-libro">{{ libro.autor }}</p>
+            <p class="isbn-libro">ISBN: {{ libro.isbn }}</p>
+            <p class="estado-libro">
                 {% if libro.disponible %}
                     <span class="disponible">Disponible</span>
                 {% else %}
                     <span class="prestado">Prestado</span>
                 {% endif %}
-            </td>
-            <td>
-                <!-- si el libro está disponible, dejamos que un usuario lo pueda
-                prestar -->
-                {% if libro.disponible %}
-                <form action="{{ url_for('prestar') }}" method="POST">
-                    <!-- Guardamos el ISBN del libro sin mostrarlo -->
-                    <input type="hidden" name="isbn" value="{{ libro.isbn }}">
-                    <!-- Lista de usuarios para escoger quién toma prestado el libro -->
-                    <select name="id_usuario" required>
-                        <option value="" disabled selected>Elegir usuario</option>
-                        <!-- Llenamos automáticamente la lista con los usuarios -->
-                        {% for usuario in usuarios %}
-                            <option value="{{ usuario.id_usuario }}">
-                                {{ usuario.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit">Prestar</button>
-                </form>
-                {% else %}
-                <!--si el libro ya está prestado, permitimos devolverlo -->
-                <form action="{{ url_for('devolver') }}" method="POST">
-                    <!--también enviamos el ISBN sin mostrarlo -->
-                    <input type="hidden" name="isbn" value="{{ libro.isbn }}">
-                    <select name="id_usuario" required>
-                        <option value="" disabled selected>Elegir usuario</option>
-                        {% for usuario in usuarios %}
-                            <option value="{{ usuario.id_usuario }}">
-                                {{ usuario.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit">Devolver</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            </p>
 
-<!-- Formulario para agregar un libro nuevo al catálogo -->
+            <div class="accion-libro">
+                {% if session.usuario %}
+                    <select class="selector-usuario">
+                        <option value="" disabled selected>Elegir usuario</option>
+                        {% for usuario in usuarios %}
+                            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if libro.disponible %}
+                        <button type="button" class="btn-prestar">Prestar</button>
+                    {% else %}
+                        <button type="button" class="btn-devolver">Devolver</button>
+                    {% endif %}
+                {% else %}
+                    <p class="subtexto">
+                        <a href="{{ url_for('login') }}">Inicia sesión</a> para prestar o devolver.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p id="sin-resultados" class="subtexto" style="display:none;">No se encontraron libros.</p>
+
+{% if session.usuario %}
 <h2>Agregar nuevo libro</h2>
 <form action="{{ url_for('agregar_libro') }}" method="POST" class="form-agregar">
-    <!-- Estos datos se envían a app.py cuando damos clic en Agregar -->
     <input type="text" name="titulo" placeholder="Título" required>
     <input type="text" name="autor" placeholder="Autor" required>
     <input type="text" name="isbn" placeholder="ISBN" required>
+    <input type="text" name="imagen" placeholder="URL de la portada (opcional)">
     <button type="submit">Agregar al catálogo</button>
 </form>
+{% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/catalogo.js') }}"></script>
 {% endblock %}

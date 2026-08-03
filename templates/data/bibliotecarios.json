@@ -1,0 +1,14 @@
+{
+    "bibliotecarios": [
+        {
+            "usuario": "jhuliana",
+            "nombre": "Jhuliana Cabrera",
+            "password_hash": "scrypt:32768:8:1$9qsD4l50gKQMfzzC$8a1763bf4ec82b65d9e727c006c828c00a6f797feebd1a2bc814028c2abafc098374cba6483d7685d36349cee6219d0ba8e789f87a98a4eb6e260dbc5e5464f6"
+        },
+        {
+            "usuario": "adrielys",
+            "nombre": "Adrielys Alcántara",
+            "password_hash": "scrypt:32768:8:1$P46xcWp7ZrjVjH3O$8a56776c86aca7fadd96c02f91a9fe25abd71f270bb7331284983180070820ad7c2a490a0782176a9f615350a4f35814cb342d4361442fb3d1409d0dd7983096"
+        }
+    ]
+}

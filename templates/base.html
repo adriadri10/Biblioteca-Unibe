@@ -2,39 +2,50 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca UNIBE</title>
     <!--conecta este archivo con el CSS-->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <header>
+        <h1>Biblioteca UNIBE</h1>
+        <!--menú para cambiar entre las páginas-->
+        <nav>
+            <a href="{{ url_for('catalogo') }}">Catálogo</a>
+            <a href="{{ url_for('usuarios') }}">Usuarios</a>
+            {% if session.usuario %}
+                <span class="sesion-info">Sesión: {{ session.nombre }}</span>
+                <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
 
-<header>
-    <h1>Biblioteca UNIBE</h1>
-    <!--menú para cambiar entre las páginas-->
-    <nav>
-        <a href="{{ url_for('catalogo') }}">Catálogo</a>
-        <a href="{{ url_for('usuarios') }}">Usuarios</a>
-    </nav>
-</header>
+    <main>
+        <!-- Contenedor de mensajes: aquí también inyectamos mensajes que vienen
+             de las llamadas AJAX (fetch), no solo los de Flask flash() -->
+        <div id="mensajes-contenedor">
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    {% for categoria, texto in mensajes %}
+                        <p class="mensaje {{ categoria }}">{{ texto }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
 
-<main>
-    <!-- estas instrucciones son de flask no de html!!!!!!!!!! Si desde app.py
-    enviamos un mensaje con flash(), aquí se va a mostrar automáticamente -->
-    {% with mensajes = get_flashed_messages(with_categories=true) %}
-        {% if mensajes %}
-            {% for categoria, texto in mensajes %}
-                <p class="mensaje {{ categoria }}">{{ texto }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        <!-- Aquí se carga el contenido de cada página-->
+        {% block content %}{% endblock %}
+    </main>
 
-    <!-- Aquí se carga el contenido de cada página-->
-    {% block content %}{% endblock %}
-</main>
+    <footer>
+        <p>Actividad Flask · TI3111-01-2026-3 · Fundamentos de Programación</p>
+    </footer>
 
-<footer>
-    <p>Actividad Flask · TI3111-01-2026-3 · Fundamentos de Programación</p>
-</footer>
-
+    <!-- JS compartido: hace que los mensajes desaparezcan solos -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

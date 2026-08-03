@@ -1,18 +1,27 @@
 import json
 import os
+from werkzeug.security import check_password_hash
 
-# Con lo del os construimos la ruta hasta el archivo JSON sin importar en qué
+# Con lo del os construimos la ruta hasta los archivos JSON sin importar en qué
 # computadora se ejecute el programa
 RUTA_DATOS = os.path.join(os.path.dirname(__file__), "data", "biblioteca.json")
+RUTA_BIBLIOTECARIOS = os.path.join(
+    os.path.dirname(__file__), "data", "bibliotecarios.json"
+)
+
+# Imagen que se usa cuando un libro no tiene portada asignada
+IMAGEN_POR_DEFECTO = "https://via.placeholder.com/200x300.png?text=Sin+portada"
 
 
 # Clase que representa un libro de la biblioteca
 class Libro:
-    def __init__(self, titulo, autor, isbn, disponible=True):
+    def __init__(self, titulo, autor, isbn, disponible=True, imagen=None):
         self.titulo = titulo
         self.autor = autor
         self.isbn = isbn
         self.disponible = disponible
+        # Si no nos pasan una imagen, usamos una portada genérica
+        self.imagen = imagen if imagen else IMAGEN_POR_DEFECTO
 
     def prestar(self):
         # Solo prestamos el libro si está disponible
@@ -37,15 +46,22 @@ class Libro:
             "autor": self.autor,
             "isbn": self.isbn,
             "disponible": self.disponible,
+            "imagen": self.imagen,
         }
 
     @staticmethod
     def from_dict(d):
         # va a reconstruir un objeto Libro desde el JSON
-        return Libro(d["titulo"], d["autor"], d["isbn"], d["disponible"])
+        return Libro(
+            d["titulo"],
+            d["autor"],
+            d["isbn"],
+            d["disponible"],
+            d.get("imagen"),
+        )
 
 
-# Clase que representa un usuario registrado
+# Clase que representa un usuario registrado (los que piden prestados los libros)
 class Usuario:
     def __init__(self, nombre, id_usuario, libros_prestados=None):
         self.nombre = nombre
@@ -73,6 +89,38 @@ class Usuario:
     def from_dict(d):
         # Reconstruye un usuario desde el JSON
         return Usuario(d["nombre"], d["id_usuario"], d["libros_prestados"])
+
+
+# Clase que representa a un bibliotecario (personal que puede iniciar sesión
+# para administrar el catálogo)
+class Bibliotecario:
+    def __init__(self, usuario, nombre, password_hash):
+        self.usuario = usuario
+        self.nombre = nombre
+        self.password_hash = password_hash
+
+    def verificar_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def cargar_todos():
+        """Lee data/bibliotecarios.json y devuelve una lista de Bibliotecario."""
+        if not os.path.exists(RUTA_BIBLIOTECARIOS):
+            return []
+        with open(RUTA_BIBLIOTECARIOS, "r", encoding="utf-8") as f:
+            datos = json.load(f)
+        return [
+            Bibliotecario(b["usuario"], b["nombre"], b["password_hash"])
+            for b in datos.get("bibliotecarios", [])
+        ]
+
+    @staticmethod
+    def autenticar(usuario, password):
+        """Busca al bibliotecario por su usuario y valida la contraseña."""
+        for b in Bibliotecario.cargar_todos():
+            if b.usuario == usuario:
+                return b if b.verificar_password(password) else None
+        return None
 
 
 # Lógica principal de la biblioteca. También se encarga de guardar y cargar los datos
