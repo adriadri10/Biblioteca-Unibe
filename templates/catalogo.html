@@ -27,11 +27,21 @@
 
             <div class="accion-libro">
                 {% if session.usuario %}
-                    <select class="selector-usuario">
-                        <option value="" disabled selected>Elegir usuario</option>
-                        {% for usuario in usuarios %}
-                            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }}</option>
-                        {% endfor %}
+                    {% if session.rol == 'admin' %}
+                        <select class="selector-usuario">
+                            <option value="" disabled selected>Elegir usuario</option>
+                            {% for usuario in usuarios %}
+                                <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input type="hidden" class="selector-usuario" value="{{ session.id_usuario }}">
+                    {% endif %}
+                    <select class="selector-dias">
+                        <option value="3">3 días</option>
+                        <option value="7" selected>7 días</option>
+                        <option value="10">10 días</option>
+                        <option value="30">30 días</option>
                     </select>
                     {% if libro.disponible %}
                         <button type="button" class="btn-prestar">Prestar</button>
@@ -51,7 +61,7 @@
 
 <p id="sin-resultados" class="subtexto" style="display:none;">No se encontraron libros.</p>
 
-{% if session.usuario %}
+{% if session.rol == 'admin' %}
 <h2>Agregar nuevo libro</h2>
 <form action="{{ url_for('agregar_libro') }}" method="POST" class="form-agregar">
     <input type="text" name="titulo" placeholder="Título" required>

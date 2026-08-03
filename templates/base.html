@@ -10,15 +10,18 @@
 <body>
     <header>
         <h1>Biblioteca UNIBE</h1>
-        <!--menú para cambiar entre las páginas-->
         <nav>
             <a href="{{ url_for('catalogo') }}">Catálogo</a>
-            <a href="{{ url_for('usuarios') }}">Usuarios</a>
-            {% if session.usuario %}
-                <span class="sesion-info">Sesión: {{ session.nombre }}</span>
+            {% if session.rol == 'admin' %}
+                <a href="{{ url_for('usuarios') }}">Usuarios</a>
+                <span class="sesion-info">Admin: {{ session.nombre }}</span>
+                <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+            {% elif session.rol == 'usuario' %}
+                <a href="{{ url_for('mi_panel') }}">Mi panel</a>
                 <a href="{{ url_for('logout') }}">Cerrar sesión</a>
             {% else %}
                 <a href="{{ url_for('login') }}">Iniciar sesión</a>
+                <a href="{{ url_for('registro') }}">Registrarse</a>
             {% endif %}
         </nav>
     </header>

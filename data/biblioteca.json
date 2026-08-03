@@ -21,49 +21,120 @@
             "isbn": "978-0075543893",
             "disponible": false,
             "imagen": "https://covers.openlibrary.org/b/isbn/978-0075543893-L.jpg"
+        },
+        {
+            "titulo": "Cien años de soledad ",
+            "autor": " Gabriel Garcìa Màrquez.",
+            "isbn": "904-3943847816374758",
+            "disponible": true,
+            "imagen": "https://tse1.mm.bing.net/th/id/OIP.1bhBX8s1-x1UUPgxRqfXFgHaLQ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+        },
+        {
+            "titulo": "Go for It, Nakamura! ",
+            "autor": " Syundei",
+            "isbn": "863-3267287468264287",
+            "disponible": false,
+            "imagen": "https://nami.news/wordpress/wp-content/uploads/2024/10/Ganbare-Nakamura-kun-Manga-Sequel-Cover-Volume-1.jpg"
         }
     ],
     "usuarios": [
         {
             "nombre": "Jhuliana Cabrera",
             "id_usuario": "26-0289",
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
             "libros_prestados": [
+                "863-3267287468264287",
                 "978-0199535989"
-            ]
+            ],
+            "prestamos": []
         },
         {
             "nombre": "Lorenzo Martínez",
             "id_usuario": "777025",
-            "libros_prestados": []
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
         },
         {
             "nombre": "Adrielys Alcántara",
             "id_usuario": "26-0568",
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
             "libros_prestados": [
                 "978-8419035769"
-            ]
+            ],
+            "prestamos": []
         },
         {
             "nombre": "Gon Freecss",
             "id_usuario": "HXH-001",
-            "libros_prestados": []
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
         },
         {
             "nombre": "Killua Zoldyck",
             "id_usuario": "HXH-002",
-            "libros_prestados": []
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
         },
         {
             "nombre": "Kurapika",
             "id_usuario": "HXH-003",
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
             "libros_prestados": [
                 "978-0075543893"
-            ]
+            ],
+            "prestamos": []
         },
         {
             "nombre": "Leorio Paladiknight",
             "id_usuario": "HXH-004",
-            "libros_prestados": []
+            "email": "",
+            "password_hash": null,
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
+        },
+        {
+            "nombre": "Adrielys",
+            "id_usuario": "26-0005",
+            "email": "adrielys10@gmail.com",
+            "password_hash": "scrypt:32768:8:1$hlmqG6mjENXWuZZz$113aa3b16ebf65d11c3dd6f806870ae4e16b9988dadc7af4b605e8279450d4e21e260d9168bc901d17ffc1c6d12c57768ddbdb4dba1063a844c2e650ba5e48c8",
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
+        },
+        {
+            "nombre": "noni",
+            "id_usuario": "26-1234",
+            "email": "noni123@gmail.com",
+            "password_hash": "scrypt:32768:8:1$ANe0SejXALC0jgKM$5d006db84d2ac6b5d6d5ffc076356fc1768596751ad8c059605cc332a7f6cf1395bfba0054901d9a8014fd65085d22da1a28107d2ca612254ba11584a52326bd",
+            "rol": "usuario",
+            "libros_prestados": [],
+            "prestamos": []
+        }
+    ],
+    "consultas": [
+        {
+            "nombre": "noni",
+            "email": "noni123@gmail.com",
+            "mensaje": "Quiero saber si puedo devolverlo el mes que viene :/",
+            "fecha": "2026-08-03",
+            "estado": "nuevo",
+            "tipo": "consulta"
         }
     ]
 }

@@ -2,12 +2,17 @@
 {% block content %}
 
 <h2>Iniciar sesión</h2>
-<p class="subtexto">Solo el personal de la biblioteca necesita iniciar sesión para
-    prestar, devolver o agregar libros. Cualquiera puede ver el catálogo y los usuarios.</p>
+<p class="subtexto">Elige si quieres entrar como administrador o como usuario.</p>
 
 <form action="{{ url_for('login') }}" method="POST" class="form-login">
-    <label for="usuario">Usuario</label>
-    <input type="text" id="usuario" name="usuario" placeholder="ej. jhuliana" required autofocus>
+    <label for="tipo">Tipo de acceso</label>
+    <select id="tipo" name="tipo">
+        <option value="admin">Administrador</option>
+        <option value="usuario">Usuario</option>
+    </select>
+
+    <label for="usuario">Usuario o matrícula</label>
+    <input type="text" id="usuario" name="usuario" placeholder="ej. jhuliana o 26-1234" required autofocus>
 
     <label for="password">Contraseña</label>
     <input type="password" id="password" name="password" placeholder="Contraseña" required>
@@ -15,7 +20,10 @@
     <button type="submit">Entrar</button>
 </form>
 
-<p class="subtexto">Usuarios de prueba: <code>jhuliana</code> / <code>adrielys</code>,
-    contraseña: <code>biblioteca26</code></p>
+<p class="subtexto">
+    <a href="{{ url_for('registro') }}">Crear cuenta de usuario</a>
+</p>
+
+<p class="subtexto">Usuarios de prueba admin: <code>jhuliana</code> / <code>adrielys</code>, contraseña: <code>biblioteca26</code></p>
 
 {% endblock %}

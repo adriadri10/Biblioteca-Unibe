@@ -10,21 +10,16 @@ from flask import (
     session,
     jsonify,
 )
+from werkzeug.security import generate_password_hash
 
-from models import Biblioteca, Libro, Bibliotecario
+from models import Biblioteca, Libro, Bibliotecario, Usuario, Consulta
 
 app = Flask(__name__)
-app.secret_key = "adriyjhulimegaclave"  # necesaria para poder usar flash() y session
+app.secret_key = "adriyjhulimegaclave"
 
-# Cargamos la biblioteca UNA vez cuando arranca el servidor.
-# a partir de aquí, cada vez que algo cambie, llamamos a biblioteca.guardar() para
-# que el cambio quede escrito en el archivo JSON.
 biblioteca = Biblioteca.cargar()
 
 
-# ---------------------------------------------------------------------------
-# LOGIN: decorador que protege las rutas que solo puede usar el bibliotecario
-# ---------------------------------------------------------------------------
 def login_requerido(vista):
     @wraps(vista)
     def envoltura(*args, **kwargs):
@@ -36,26 +31,91 @@ def login_requerido(vista):
     return envoltura
 
 
+def admin_requerido(vista):
+    @wraps(vista)
+    def envoltura(*args, **kwargs):
+        if session.get("rol") != "admin":
+            flash("Solo el administrador puede acceder a esta vista.", "error")
+            return redirect(url_for("catalogo"))
+        return vista(*args, **kwargs)
+
+    return envoltura
+
+
+def usuario_requerido(vista):
+    @wraps(vista)
+    def envoltura(*args, **kwargs):
+        if session.get("rol") != "usuario":
+            flash("Debes iniciar sesión como usuario para entrar a tu panel.", "error")
+            return redirect(url_for("login"))
+        return vista(*args, **kwargs)
+
+    return envoltura
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # si ya inició sesión, lo mandamos directo al catálogo
     if "usuario" in session:
         return redirect(url_for("catalogo"))
 
     if request.method == "POST":
+        tipo = request.form.get("tipo", "admin")
         usuario = request.form.get("usuario", "").strip()
         password = request.form.get("password", "")
-        bibliotecario = Bibliotecario.autenticar(usuario, password)
-        if bibliotecario:
-            # guardamos el usuario en la sesión (cookie firmada del lado del cliente)
-            session["usuario"] = bibliotecario.usuario
-            session["nombre"] = bibliotecario.nombre
-            flash(f"Bienvenida, {bibliotecario.nombre}.", "exito")
-            siguiente = request.args.get("next") or url_for("catalogo")
-            return redirect(siguiente)
-        flash("Usuario o contraseña incorrectos.", "error")
+
+        if tipo == "admin":
+            bibliotecario = Bibliotecario.autenticar(usuario, password)
+            if bibliotecario:
+                session["usuario"] = bibliotecario.usuario
+                session["nombre"] = bibliotecario.nombre
+                session["rol"] = "admin"
+                flash(f"Bienvenida, {bibliotecario.nombre}.", "exito")
+                siguiente = request.args.get("next") or url_for("catalogo")
+                return redirect(siguiente)
+            flash("Usuario o contraseña incorrectos para administrador.", "error")
+        else:
+            usuario_obj = biblioteca.buscar_usuario(usuario)
+            if usuario_obj and usuario_obj.verificar_password(password):
+                session["usuario"] = usuario_obj.id_usuario
+                session["nombre"] = usuario_obj.nombre
+                session["rol"] = "usuario"
+                session["id_usuario"] = usuario_obj.id_usuario
+                flash(f"Bienvenido, {usuario_obj.nombre}.", "exito")
+                return redirect(url_for("mi_panel"))
+            flash("Usuario o contraseña incorrectos para usuario.", "error")
 
     return render_template("login.html")
+
+
+@app.route("/registro", methods=["GET", "POST"])
+def registro():
+    if request.method == "POST":
+        nombre = request.form.get("nombre", "").strip()
+        id_usuario = request.form.get("id_usuario", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        if not nombre or not id_usuario or not password:
+            flash("Completa nombre, matrícula y contraseña.", "error")
+            return render_template("registro.html")
+
+        if biblioteca.buscar_usuario(id_usuario) is not None:
+            flash("Ese usuario ya está registrado.", "error")
+            return render_template("registro.html")
+
+        nuevo_usuario = Usuario(
+            nombre=nombre,
+            id_usuario=id_usuario,
+            email=email,
+            password_hash=generate_password_hash(password),
+            rol="usuario",
+        )
+        biblioteca.agregar_usuario(nuevo_usuario)
+        biblioteca.guardar()
+        flash("Registro exitoso. Ahora puedes iniciar sesión como usuario.", "exito")
+        return redirect(url_for("login"))
+
+    return render_template("registro.html")
 
 
 @app.route("/logout")
@@ -67,14 +127,11 @@ def logout():
 
 @app.route("/")
 def index():
-    # Redirige la página raíz directo al catálogo
     return redirect(url_for("catalogo"))
 
 
 @app.route("/catalogo")
 def catalogo():
-    # render_template busca el archivo dentro de la carpeta templates/
-    # y le metemos la lista de libros y usuarios para poder usarla en el HTML
     return render_template(
         "catalogo.html",
         libros=biblioteca.catalogo,
@@ -82,10 +139,6 @@ def catalogo():
     )
 
 
-# ---------------------------------------------------------------------------
-# Endpoint AJAX: filtra el catálogo por título/autor sin recargar la página.
-# Devuelve JSON que el JavaScript del catálogo usa para redibujar la tabla.
-# ---------------------------------------------------------------------------
 @app.route("/api/buscar")
 def api_buscar():
     termino = request.args.get("q", "").strip().lower()
@@ -96,19 +149,15 @@ def api_buscar():
     return jsonify(resultado)
 
 
-# ---------------------------------------------------------------------------
-# Préstamo y devolución ahora responden en JSON para poder actualizarse con
-# fetch() desde el catálogo (más interactivo, sin recargar toda la página).
-# Requieren sesión iniciada.
-# ---------------------------------------------------------------------------
 @app.route("/prestar", methods=["POST"])
 @login_requerido
 def prestar():
     isbn = request.form.get("isbn")
-    id_usuario = request.form.get("id_usuario")
-    exito, mensaje = biblioteca.prestar_libro(isbn, id_usuario)
+    id_usuario = request.form.get("id_usuario") or session.get("id_usuario")
+    dias = request.form.get("dias", "7")
+    exito, mensaje = biblioteca.prestar_libro(isbn, id_usuario, dias=dias)
     if exito:
-        biblioteca.guardar()  # solo guardamos en disco si el cambio fue exitoso
+        biblioteca.guardar()
 
     if request.headers.get("X-Requested-With") == "fetch":
         libro = biblioteca.buscar_libro(isbn)
@@ -126,7 +175,7 @@ def prestar():
 @login_requerido
 def devolver():
     isbn = request.form.get("isbn")
-    id_usuario = request.form.get("id_usuario")
+    id_usuario = request.form.get("id_usuario") or session.get("id_usuario")
     exito, mensaje = biblioteca.devolver_libro(isbn, id_usuario)
     if exito:
         biblioteca.guardar()
@@ -144,7 +193,7 @@ def devolver():
 
 
 @app.route("/agregar_libro", methods=["POST"])
-@login_requerido
+@admin_requerido
 def agregar_libro():
     titulo = request.form.get("titulo")
     autor = request.form.get("autor")
@@ -161,9 +210,8 @@ def agregar_libro():
 
 
 @app.route("/usuarios")
+@admin_requerido
 def usuarios():
-    # Para cada usuario, buscamos los títulos de sus libros prestados (no solo el
-    # ISBN) para que se vea más claro en el HTML
     usuarios_con_libros = []
     for usuario in biblioteca.usuarios:
         titulos = []
@@ -172,7 +220,44 @@ def usuarios():
             if libro:
                 titulos.append(libro.titulo)
         usuarios_con_libros.append((usuario, titulos))
-    return render_template("usuarios.html", usuarios_con_libros=usuarios_con_libros)
+    return render_template(
+        "usuarios.html",
+        usuarios_con_libros=usuarios_con_libros,
+        consultas=biblioteca.consultas,
+    )
+
+
+@app.route("/mi_panel")
+@usuario_requerido
+def mi_panel():
+    usuario_actual = biblioteca.buscar_usuario(session.get("id_usuario"))
+    return render_template(
+        "mi_panel.html",
+        usuario=usuario_actual,
+        prestamos=usuario_actual.prestamos if usuario_actual else [],
+        consultas=biblioteca.consultas,
+    )
+
+
+@app.route("/consultar", methods=["POST"])
+@usuario_requerido
+def consultar():
+    nombre = request.form.get("nombre", "").strip()
+    email = request.form.get("email", "").strip()
+    mensaje = request.form.get("mensaje", "").strip()
+    tipo = request.form.get("tipo", "consulta")
+
+    if not nombre or not mensaje:
+        flash("Escribe tu nombre y tu mensaje.", "error")
+        return redirect(url_for("mi_panel"))
+
+    biblioteca.agregar_consulta(
+        Consulta(nombre=nombre, email=email, mensaje=mensaje, tipo=tipo)
+    )
+    biblioteca.guardar()
+    etiqueta = "sugerencia" if tipo == "sugerencia" else "consulta"
+    flash(f"Tu {etiqueta} fue enviada al administrador.", "exito")
+    return redirect(url_for("mi_panel"))
 
 
 if __name__ == "__main__":

@@ -34,7 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const tarjeta = boton.closest(".tarjeta-libro");
             const isbn = tarjeta.dataset.isbn;
             const select = tarjeta.querySelector(".selector-usuario");
+            const selectDias = tarjeta.querySelector(".selector-dias");
             const idUsuario = select ? select.value : "";
+            const dias = selectDias ? selectDias.value : "7";
 
             if (!idUsuario) {
                 mostrarMensaje("Debes elegir un usuario primero.", "error");
@@ -47,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const datos = new FormData();
             datos.append("isbn", isbn);
             datos.append("id_usuario", idUsuario);
+            datos.append("dias", dias);
 
             boton.disabled = true;
             try {

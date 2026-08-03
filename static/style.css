@@ -6,8 +6,10 @@
 
 body {
     margin: 0;
-    background-color: #ffffff;
-    color: #1f2937;
+    background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.25), transparent 35%),
+        linear-gradient(180deg, #0b1220, #111827 45%, #0f172a);
+    color: #f3f4f6;
 }
 
 /* Encabezado */
@@ -46,19 +48,19 @@ nav a:hover {
 
 /* Contenido principal */
 main {
-    max-width: 1100px;
+    max-width: 1180px;
     margin: 30px auto;
-    padding: 20px;
+    padding: 24px;
 }
 
 h2 {
-    color: #3f2a73;
-    border-bottom: 2px solid #a9d6ff;
+    color: #d6e4ff;
+    border-bottom: 2px solid #3b82f6;
     padding-bottom: 6px;
 }
 
 .subtexto {
-    color: #555;
+    color: #9ca3af;
     font-size: 0.9em;
 }
 
@@ -67,18 +69,19 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
-    background-color: white;
+    background-color: #1f2937;
 }
 
 th, td {
-    border: 1px solid #d4d9e2;
+    border: 1px solid #374151;
     padding: 10px;
     text-align: left;
+    color: #f3f4f6;
 }
 
 th {
-    background-color: #d9ecff;
-    color: #0b1f4d;
+    background-color: #0b1f4d;
+    color: #d6e4ff;
 }
 
 /* Estado de los libros */
@@ -100,9 +103,11 @@ th {
 .buscador input {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #3f2a73;
+    border: 1px solid #4b5563;
     border-radius: 6px;
     font-size: 1em;
+    background-color: #1f2937;
+    color: #f3f4f6;
 }
 
 /* Grid de tarjetas de libros */
@@ -114,9 +119,9 @@ th {
 }
 
 .tarjeta-libro {
-    border: 1px solid #d4d9e2;
+    border: 1px solid #374151;
     border-radius: 8px;
-    background-color: white;
+    background-color: #1f2937;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -125,14 +130,14 @@ th {
 
 .tarjeta-libro:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 14px rgba(11, 31, 77, 0.15);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
 }
 
 .portada-libro {
     width: 100%;
     height: 260px;
     object-fit: cover;
-    background-color: #d9ecff;
+    background-color: #243046;
 }
 
 .info-libro {
@@ -146,19 +151,19 @@ th {
 .info-libro h3 {
     margin: 0;
     font-size: 1.05em;
-    color: #0b1f4d;
+    color: #d6e4ff;
 }
 
 .autor-libro {
     margin: 0;
-    color: #555;
+    color: #cbd5e1;
     font-style: italic;
 }
 
 .isbn-libro {
     margin: 0;
     font-size: 0.8em;
-    color: #888;
+    color: #9ca3af;
 }
 
 .accion-libro {
@@ -177,15 +182,22 @@ form {
     flex-wrap: wrap;
 }
 
-input[type="text"], input[type="password"], select {
-    padding: 6px;
-    border: 1px solid #3f2a73;
-    border-radius: 4px;
+input[type="text"], input[type="password"], select, textarea {
+    padding: 8px 10px;
+    border: 1px solid #4b5563;
+    border-radius: 6px;
+    background-color: #1f2937;
+    color: #f3f4f6;
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
 }
 
 /* Botones */
 button {
-    background-color: #3f2a73;
+    background-color: #2563eb;
     color: white;
     border: none;
     padding: 7px 12px;
@@ -194,7 +206,7 @@ button {
 }
 
 button:hover {
-    background-color: #0b1f4d;
+    background-color: #1d4ed8;
 }
 
 button:disabled {
@@ -204,16 +216,16 @@ button:disabled {
 
 /* Formulario para agregar libros */
 .form-agregar {
-    background-color: white;
-    border: 1px solid #d4d9e2;
+    background-color: #1f2937;
+    border: 1px solid #374151;
     border-radius: 6px;
     padding: 15px;
 }
 
 /* Formulario de login */
 .form-login {
-    background-color: white;
-    border: 1px solid #d4d9e2;
+    background-color: #1f2937;
+    border: 1px solid #374151;
     border-radius: 6px;
     padding: 20px;
     max-width: 360px;
@@ -224,7 +236,7 @@ button:disabled {
 
 .form-login label {
     font-weight: bold;
-    color: #0b1f4d;
+    color: #d6e4ff;
 }
 
 /* Mensajes de Flask / AJAX */
@@ -237,18 +249,18 @@ button:disabled {
 }
 
 .mensaje.exito {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #1f4d3f;
+    color: #d1fae5;
 }
 
 .mensaje.error {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #4b1d2a;
+    color: #fecdd3;
 }
 
 /* Usuarios sin préstamos */
 .sin-prestamos {
-    color: gray;
+    color: #9ca3af;
     font-style: italic;
 }
 
@@ -256,6 +268,33 @@ button:disabled {
 footer {
     text-align: center;
     padding: 20px;
-    color: #3f2a73;
+    color: #cbd5e1;
     font-size: 0.9em;
+}
+
+.panel-usuario {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.card-panel {
+    background: rgba(31, 41, 55, 0.88);
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.card-panel h3 {
+    color: #d6e4ff;
+    margin-top: 0;
+}
+
+.card-panel ul {
+    padding-left: 18px;
+}
+
+.card-panel li {
+    margin-bottom: 10px;
 }

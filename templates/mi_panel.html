@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Panel del usuario</h2>
+<p class="subtexto">Bienvenido, {{ usuario.nombre }}. Aquí puedes ver tus préstamos y consultar cualquier duda al administrador.</p>
+
+<div class="panel-usuario">
+    <div class="card-panel">
+        <h3>Mis préstamos</h3>
+        {% if prestamos %}
+            <ul>
+                {% for prestamo in prestamos %}
+                    <li>
+                        <strong>ISBN:</strong> {{ prestamo.isbn }}
+                        <br>
+                        <strong>Días solicitados:</strong> {{ prestamo.dias }}
+                        <br>
+                        <strong>Inicio:</strong> {{ prestamo.fecha_inicio }}
+                        <br>
+                        <strong>Fin:</strong> {{ prestamo.fecha_fin }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="sin-prestamos">Todavía no tienes préstamos activos.</p>
+        {% endif %}
+    </div>
+
+    <div class="card-panel">
+        <h3>Buzón de consultas y sugerencias</h3>
+        <form action="{{ url_for('consultar') }}" method="POST" class="form-login">
+            <label for="nombre">Tu nombre</label>
+            <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required>
+
+            <label for="email">Correo</label>
+            <input type="text" id="email" name="email" value="{{ usuario.email }}">
+
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo">
+                <option value="consulta">Consulta</option>
+                <option value="sugerencia">Sugerencia</option>
+            </select>
+
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="5" placeholder="Escribe tu consulta o sugerencia para el administrador..." required></textarea>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+
+{% if consultas %}
+<div class="card-panel">
+    <h3>Mensajes recibidos</h3>
+    <ul>
+        {% for consulta in consultas %}
+            <li>
+                <strong>{{ consulta.nombre }}</strong> · {{ consulta.tipo|capitalize }} · {{ consulta.fecha }}
+                <p>{{ consulta.mensaje }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% endblock %}

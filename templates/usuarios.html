@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Aquí mostramos todos los usuarios registrados -->
 <h2>Usuarios registrados</h2>
 
 <table>
@@ -13,7 +12,6 @@
         </tr>
     </thead>
     <tbody>
-        <!--recorremos la lista de usuarios que viene desde app.py -->
         {% for usuario, titulos in usuarios_con_libros %}
         <tr>
             <td>{{ usuario.nombre }}</td>
@@ -33,5 +31,29 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% if consultas %}
+<h2>Sugerencias y consultas de usuarios</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Mensaje</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for consulta in consultas %}
+        <tr>
+            <td>{{ consulta.nombre }}</td>
+            <td>{{ consulta.tipo }}</td>
+            <td>{{ consulta.fecha }}</td>
+            <td>{{ consulta.mensaje }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 {% endblock %}
